@@ -14,12 +14,22 @@ plugins {
 
 android {
     namespace = "io.h3llo.parkitcourse"
-//    namespace = "com.mkiperszmid.parkitcourse"
     compileSdk = 34
+
+    val localPropertiesFile = rootProject.file("local.properties")
+    val localProperties = Properties().apply{
+        load(FileInputStream(localPropertiesFile))
+    }
+
+    val googleMapsApiKey = localProperties.getProperty("MAPS_API_KEY")
+        ?: throw IllegalArgumentException("No MAPS_API_KEY found in local.properties")
+    val googleWebClientId = localProperties.getProperty("GOOGLE_WEBCLIENT_ID")
+        ?: throw IllegalArgumentException("No GOOGLE_WEBCLIENT_ID found in local.properties")
+
+
 
     defaultConfig {
         applicationId = "io.h3llo.parkitcourse"
-        // applicationId = "com.mkiperszmid.parkitcourse"
         minSdk = 24
         targetSdk = 34
         versionCode = 1
@@ -29,6 +39,10 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
+
+        buildConfigField("String", "MAPS_API_KEY", "\"$googleMapsApiKey\"")
+        buildConfigField("String", "GOOGLE_WEBCLIENT_ID", "\"$googleWebClientId\"")
+
     }
 
     buildTypes {
@@ -49,6 +63,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
     packaging {
         resources {
